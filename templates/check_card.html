@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>카드번호 조회</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+        }
+        h1 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        form {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #66a3ff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #3385ff;
+        }
+        .leaked {
+            color: red;
+        }
+        .safe {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>내 카드번호가 유출되었나요?</h1>
+        <form method="POST" action="/check_card">
+            <label for="card_number">카드 번호:</label>
+            <input type="text" id="card_number" name="card_number" required 
+                   maxlength="19" pattern="\d{4}-?\d{4}-?\d{4}-?\d{4}" 
+                   placeholder="0000-0000-0000-0000" oninput="formatCardNumber()">
+            <button type="submit">확인</button>
+        </form>
+        {% if result %}
+            <p class="{{ result_class }}">{{ result }}</p>
+        {% endif %}
+        <p><a href="/">메인 메뉴로 돌아가기</a></p>
+    </div>
+
+    <script>
+        function formatCardNumber() {
+            var cardNumberInput = document.getElementById('card_number');
+            var formattedCardNumber = cardNumberInput.value.replace(/\D/g, '')
+                                        .replace(/(\d{4})(?=\d)/g, '$1-');
+            cardNumberInput.value = formattedCardNumber;
+        }
+    </script>
+</body>
+</html>

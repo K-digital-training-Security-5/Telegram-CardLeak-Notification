@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>판매자 추적</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+            overflow: auto;
+        }
+        h1 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        form {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #66a3ff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #3385ff;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #66a3ff;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .top-link {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .top-link a {
+            color: #66a3ff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .result-section {
+            margin-top: 320px;
+            overflow: auto;
+        }
+
+        .tor-warning {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        function confirmRedirect(event, url) {
+            event.preventDefault();
+            if (confirm("다크웹 사이트에 접속하시겠습니까?")) {
+                window.open(url, '_blank');
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        {% if results %}
+        <div class="top-link">
+            <a href="/track_seller">다시 찾아보기</a>
+        </div>
+        <div class="result-section">
+            <h2>대상: {{ seller_id }}</h2>
+            <table>
+                <tr>
+                    <th>플랫폼</th>
+                    <th>링크</th>
+                </tr>
+                {% for platform, url in results.items() %}
+                    <tr>
+                        <td>{{ platform }}</td>
+                        <td>
+                            {% if url %}
+                                {% if "0day" in url %}
+                                    <a href="{{ url }}" target="_blank" class="result-link" onclick="confirmRedirect(event, '{{ url }}')">{{ url }}</a>
+                                    <span class="tor-warning">(링크 복사 후 우회 접속 권장)</span>
+                                {% else %}
+                                    <a href="{{ url }}" target="_blank" class="result-link">{{ url }}</a>
+                                {% endif %}
+                            {% else %}
+                                찾을 수 없음
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <p><a href="/">메인 메뉴로 돌아가기</a></p>
+        {% else %}
+        <h1>당신이 찾는 사람은 누구인가요?</h1>
+        <form method="POST" action="/track_seller">
+            <label for="seller_id">판매자 ID (닉네임):</label>
+            <input type="text" id="seller_id" name="seller_id" required>
+            <button type="submit">찾기</button>
+        </form>
+        <p><a href="/">메인 메뉴로 돌아가기</a></p>
+        {% endif %}
+    </div>
+
+</body>
+</html>
